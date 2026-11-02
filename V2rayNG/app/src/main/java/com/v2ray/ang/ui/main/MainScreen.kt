@@ -1,8 +1,12 @@
 package com.v2ray.ang.ui.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
@@ -15,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +32,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -35,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.v2ray.ang.dto.entities.ProfileItem
 import com.v2ray.ang.handler.MmkvManager
+import com.v2ray.ang.handler.UukeeAutoServer
 import com.v2ray.ang.ui.compose.LocalDarkTheme
 import com.v2ray.ang.ui.compose.QRCodeDialog
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -61,6 +68,9 @@ fun MainScreen(
         selectedGuid?.let { MmkvManager.decodeServerConfig(it)?.remarks }.orEmpty()
     }
     val hasSubscription = remember(groups) { mainViewModel.getSubscriptions().isNotEmpty() }
+    var showServers by rememberSaveable { mutableStateOf(false) }
+    var manualServer by remember { mutableStateOf(UukeeAutoServer.isManual) }
+    BackHandler(enabled = showServers) { showServers = false }
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var showSearch by remember { mutableStateOf(false) }
@@ -197,7 +207,6 @@ fun MainScreen(
                     }
                 )
             },
-            bottomBar = { UukeeBottomNav(onAction) },
             floatingActionButton = {},
         ) { innerPadding ->
             val layoutDirection = LocalLayoutDirection.current
@@ -207,14 +216,40 @@ fun MainScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                MainConnectPanel(
-                    isRunning = isRunning,
-                    displayText = displayText,
-                    serverName = selectedServerName,
-                    hasSubscription = hasSubscription,
-                    onAction = onAction,
-                )
-                if (groups.isNotEmpty()) {
+                if (!showServers) {
+                    MainHome(
+                        isRunning = isRunning,
+                        displayText = displayText,
+                        serverName = selectedServerName,
+                        hasSubscription = hasSubscription,
+                        manualServer = manualServer,
+                        usageInfo = groups.firstOrNull { it.usageInfo != null }?.usageInfo,
+                        groupTitle = groups.firstOrNull { it.usageInfo != null }?.remarks.orEmpty(),
+                        onAction = onAction,
+                        onShowServers = { showServers = true },
+                        onRefresh = { onAction(MainAction.UpdateSubscriptions) },
+                    )
+                } else {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextButton(onClick = { showServers = false }) { Text("Назад") }
+                        Spacer(Modifier.weight(1f))
+                        TextButton(
+                            onClick = {
+                                UukeeAutoServer.isManual = false
+                                manualServer = false
+                                showServers = false
+                            }
+                        ) {
+                            Text(if (manualServer) "Выбирать автоматически" else "Сейчас автоматически")
+                        }
+                    }
+                }
+                if (showServers && groups.isNotEmpty()) {
                     MainServerTools(
                         isRunning = isRunning,
                         isTesting = uiState.isTesting,
@@ -255,7 +290,11 @@ fun MainScreen(
                             searchQuery = searchQuery,
                             lazyListStates = lazyListStates,
                             lazyGridStates = lazyGridStates,
-                            onSelectServer = { guid -> onAction(MainAction.SelectServer(guid)) },
+                            onSelectServer = { guid ->
+                                UukeeAutoServer.isManual = true
+                                manualServer = true
+                                onAction(MainAction.SelectServer(guid))
+                            },
                             onEditServer = { guid, profile -> onAction(MainAction.EditServer(guid, profile)) },
                             onShareServer = { guid, profile ->
                                 shareTarget = Triple(guid, profile, false)

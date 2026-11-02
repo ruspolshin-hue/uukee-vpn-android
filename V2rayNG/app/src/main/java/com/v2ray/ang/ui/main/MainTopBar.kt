@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -76,44 +77,29 @@ fun MainTopBar(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val logoShape = RoundedCornerShape(12.dp)
-            Image(
-                painter = painterResource(R.mipmap.ic_launcher_foreground),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(44.dp)
-                    .clip(logoShape)
-                    .background(Color(0xFF0F0A1A))
-                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, logoShape)
-            )
-            Spacer(Modifier.width(12.dp))
-            Text(
-                text = "UUkee",
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-                HeaderIconButton(R.drawable.ic_more_vert_24dp, stringResource(R.string.acc_more)) {
-                    showMenu = true
-                }
-                DropdownMenu(
-                    expanded = showMenu,
-                    onDismissRequest = { showMenu = false },
-                    scrollState = moreMenuScrollState,
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    modifier = Modifier
-                        .heightIn(max = maxMenuHeight)
-                        .verticalScrollbar(moreMenuScrollState)
-                ) {
-                    MoreMenuContent { action ->
-                        showMenu = false
-                        onMoreMenuAction(action)
-                    }
-                }
+            HeaderIconButton(R.drawable.ic_settings_24dp, stringResource(R.string.title_settings), onMenuClick)
+            Row(
+                Modifier.weight(1f),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(R.mipmap.ic_launcher_foreground),
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp)
+                )
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = "UUkee",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.ExtraBold
+                )
             }
+            HeaderIconButton(R.drawable.ic_scan_24dp, "QR") { onAction(MainAction.ImportQRcode) }
             Spacer(Modifier.width(8.dp))
-            HeaderIconButton(R.drawable.ic_menu_24dp, stringResource(R.string.title_settings), onMenuClick)
+            HeaderIconButton(R.drawable.ic_feedback_24dp, "Поддержка") {
+                onAction(MainAction.OpenSubscriptionLink("https://t.me/Hypisdec"))
+            }
         }
         if (isLoading) {
             LinearProgressIndicator(Modifier.fillMaxWidth())

@@ -13,7 +13,7 @@ android {
         applicationId = "com.uukee.vpn"
         minSdk = 24
         targetSdk = 37
-        versionCode = 756
+        versionCode = 757
         versionName = "2.3.15"
 
         val abiFilterList = (properties["ABI_FILTERS"] as? String)?.split(';')

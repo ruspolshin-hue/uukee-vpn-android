@@ -571,4 +571,6 @@
     <string name="uukee_reset_title" translatable="false">Сброс настроек</string>
     <string name="uukee_faq_title" translatable="false">FAQ</string>
     <string name="uukee_schemes_title" translatable="false">Схемы URL-адресов</string>
+    <string name="uukee_cabinet_title" translatable="false">Кабинет</string>
+    <string name="uukee_bot_title" translatable="false">Подписка в боте</string>
 </resources>

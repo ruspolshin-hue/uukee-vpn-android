@@ -46,6 +46,8 @@ enum class MainDestination(@DrawableRes val iconRes: Int, @StringRes val labelRe
     Stats(R.drawable.ic_flash_on_24dp, R.string.uukee_stats_title),
     Reset(R.drawable.ic_restore_24dp, R.string.uukee_reset_title),
     Faq(R.drawable.ic_feedback_24dp, R.string.uukee_faq_title),
+    Cabinet(R.drawable.ic_lock_24dp, R.string.uukee_cabinet_title),
+    Bot(R.drawable.ic_subscriptions_24dp, R.string.uukee_bot_title),
     UrlSchemes(R.drawable.ic_source_code_24dp, R.string.uukee_schemes_title),
     CheckUpdate(R.drawable.ic_check_update_24dp, R.string.update_check_for_update),
     BackupRestore(R.drawable.ic_restore_24dp, R.string.title_configuration_backup_restore),
@@ -53,6 +55,8 @@ enum class MainDestination(@DrawableRes val iconRes: Int, @StringRes val labelRe
 }
 
 private val primaryDrawerItems = listOf(
+    MainDestination.Bot,
+    MainDestination.Cabinet,
     MainDestination.Subscriptions,
     MainDestination.PerAppProxy,
     MainDestination.Routing,

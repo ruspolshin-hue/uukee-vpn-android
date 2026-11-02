@@ -25,6 +25,7 @@ import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.handler.SettingsChangeManager
 import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.handler.SubscriptionInfoParser
+import com.v2ray.ang.handler.UukeeAutoServer
 import com.v2ray.ang.ui.AboutActivity
 import com.v2ray.ang.ui.tools.UukeeToolsActivity
 import com.v2ray.ang.ui.backup.BackupActivity
@@ -160,6 +161,14 @@ class MainActivity : HelperBaseComponentActivity() {
             MainDestination.Stats -> UukeeToolsActivity.intent(this, UukeeToolsActivity.MODE_STATS)
             MainDestination.Reset -> UukeeToolsActivity.intent(this, UukeeToolsActivity.MODE_RESET)
             MainDestination.UrlSchemes -> UukeeToolsActivity.intent(this, UukeeToolsActivity.MODE_SCHEMES)
+            MainDestination.Cabinet -> {
+                Utils.openUri(this, "https://kabinet.uukee.xyz")
+                return
+            }
+            MainDestination.Bot -> {
+                Utils.openUri(this, "https://t.me/uukee_bot")
+                return
+            }
             MainDestination.Faq -> {
                 Utils.openUri(this, "https://kabinet.uukee.xyz/info")
                 return
@@ -179,6 +188,9 @@ class MainActivity : HelperBaseComponentActivity() {
         if (mainViewModel.uiState.value.isRunning) {
             LauncherManager.stopService(this)
         } else {
+            if (!UukeeAutoServer.isManual) {
+                UukeeAutoServer.pick(this)?.let { mainViewModel.updateSelectedGuid(it) }
+            }
             requestServiceStart()
         }
     }
