@@ -20,6 +20,8 @@ import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import org.json.JSONException
+import org.json.JSONObject
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -123,6 +125,18 @@ class RealPingWorkerService(
             }
         }
 
+        // Полные JSON-конфигурации проверяются строго по одной, поэтому мёртвый сервер
+        // отсеиваем быстрой проверкой порта, а не ждём таймаут всей очереди.
+        if (config.configType == EConfigType.CUSTOM) {
+            val endpoints = customEndpoints(guid)
+            if (endpoints.size == 1) {
+                val (host, port) = endpoints.first()
+                if (SpeedtestManager.socketConnectTime(host, port, PRECHECK_TIMEOUT_MS) <= -1L) {
+                    return retFailure
+                }
+            }
+        }
+
         val configResult = CoreConfigManager.getV2rayConfig4Speedtest(context, guid)
         if (!configResult.status) {
             return retFailure
@@ -150,6 +164,44 @@ class RealPingWorkerService(
             return tcpTime
         }
 
+        if (config.configType == EConfigType.CUSTOM) {
+            val (host, port) = customEndpoints(guid).firstOrNull() ?: return retFailure
+            return SpeedtestManager.socketConnectTime(host, port, PRECHECK_TIMEOUT_MS)
+        }
+
         return retFailure
+    }
+
+    /** Адреса серверов из полной JSON-конфигурации. Пусто, если порт проверить нельзя (UDP, QUIC). */
+    private fun customEndpoints(guid: String): List<Pair<String, Int>> {
+        val raw = MmkvManager.decodeServerRaw(guid) ?: return emptyList()
+        return try {
+            val outbounds = JSONObject(raw).optJSONArray("outbounds") ?: return emptyList()
+            val endpoints = linkedSetOf<Pair<String, Int>>()
+            for (index in 0 until outbounds.length()) {
+                val outbound = outbounds.optJSONObject(index) ?: continue
+                if (outbound.optString("protocol") !in TCP_CHECKABLE_PROTOCOLS) continue
+                val stream = outbound.optJSONObject("streamSettings")
+                if (stream?.optString("network") in UDP_NETWORKS || stream?.toString()?.contains("h3") == true) {
+                    return emptyList()
+                }
+                val settings = outbound.optJSONObject("settings") ?: continue
+                val target = settings.optJSONArray("vnext")?.optJSONObject(0)
+                    ?: settings.optJSONArray("servers")?.optJSONObject(0)
+                    ?: settings
+                val host = target.optString("address")
+                val port = target.optInt("port")
+                if (host.isNotEmpty() && port > 0) endpoints.add(host to port)
+            }
+            endpoints.toList()
+        } catch (_: JSONException) {
+            emptyList()
+        }
+    }
+
+    private companion object {
+        const val PRECHECK_TIMEOUT_MS = 1500
+        val TCP_CHECKABLE_PROTOCOLS = setOf("vless", "vmess", "trojan", "shadowsocks")
+        val UDP_NETWORKS = setOf("kcp", "mkcp", "quic")
     }
 }
