@@ -215,11 +215,11 @@ fun MainScreen(
                     onAction = onAction,
                 )
                 if (groups.isNotEmpty()) {
-                    Text(
-                        text = "Серверы",
-                        modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                    MainServerTools(
+                        isRunning = isRunning,
+                        isTesting = uiState.isTesting,
+                        statusText = displayText,
+                        onAction = onAction,
                     )
                     if (groups.size > 1) {
                         GroupTabBar(

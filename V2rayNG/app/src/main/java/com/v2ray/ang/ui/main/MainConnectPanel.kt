@@ -9,6 +9,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -180,6 +182,96 @@ private fun StatusPill(isRunning: Boolean) {
         style = MaterialTheme.typography.labelLarge,
         fontWeight = FontWeight.SemiBold
     )
+}
+
+/** Заголовок списка: обновление подписки и четыре варианта проверки серверов. */
+@Composable
+fun MainServerTools(
+    isRunning: Boolean,
+    isTesting: Boolean,
+    statusText: String,
+    onAction: (MainAction) -> Unit,
+) {
+    Column(Modifier.fillMaxWidth()) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 12.dp, top = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Серверы",
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            ToolChip(
+                label = "Обновить",
+                iconRes = R.drawable.ic_refresh_24dp,
+                onClick = { onAction(MainAction.UpdateSubscriptions) }
+            )
+        }
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (isTesting) {
+                ToolChip("Остановить проверку", onClick = { onAction(MainAction.CancelTesting) })
+            } else {
+                ToolChip("Реальный пинг", onClick = { onAction(MainAction.TestRealAllServers) })
+                ToolChip("TCP-пинг", onClick = { onAction(MainAction.TestAllServers) })
+                ToolChip(
+                    "Текущий сервер",
+                    enabled = isRunning,
+                    onClick = { onAction(MainAction.TestCurrentServer) }
+                )
+                ToolChip("По пингу", onClick = { onAction(MainAction.SortByTestResults) })
+            }
+        }
+        if (isTesting) {
+            Text(
+                text = statusText,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+    }
+}
+
+@Composable
+private fun ToolChip(
+    label: String,
+    iconRes: Int? = null,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+) {
+    val shape = RoundedCornerShape(12.dp)
+    val contentColor = if (enabled) MaterialTheme.colorScheme.onSurface
+    else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+    Row(
+        modifier = Modifier
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.72f))
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
+            .clickable(enabled = enabled, onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (iconRes != null) {
+            Icon(
+                painterResource(iconRes),
+                contentDescription = null,
+                tint = contentColor,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(Modifier.width(6.dp))
+        }
+        Text(label, style = MaterialTheme.typography.labelLarge, color = contentColor, maxLines = 1)
+    }
 }
 
 private class BottomNavItem(val iconRes: Int, val label: String, val url: String?)
