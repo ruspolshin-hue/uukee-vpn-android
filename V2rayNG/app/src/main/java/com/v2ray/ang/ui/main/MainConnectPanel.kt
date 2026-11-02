@@ -56,7 +56,7 @@ private const val BOT_URL = "https://t.me/uukee_bot"
 private const val TWO_PI = 6.2831855f
 private val ConstellationColor = Color(0xFFD946EF)
 
-/** Главный блок UUkee VPN: большая кнопка подключения, статус и выбранный сервер. */
+/** Главный блок UUkee: большая кнопка подключения, статус и выбранный сервер. */
 @Composable
 fun MainConnectPanel(
     isRunning: Boolean,
@@ -84,7 +84,7 @@ fun MainConnectPanel(
             )
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "Откройте бота, выберите подписку и нажмите «Открыть в UUkee VPN». " +
+                text = "Откройте бота, выберите подписку и нажмите «Открыть в UUkee». " +
                     "Или скопируйте ссылку подписки и вставьте её здесь.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

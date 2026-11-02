@@ -88,7 +88,7 @@ fun MainTopBar(
             )
             Spacer(Modifier.width(12.dp))
             Text(
-                text = "UUkee VPN",
+                text = "UUkee",
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
