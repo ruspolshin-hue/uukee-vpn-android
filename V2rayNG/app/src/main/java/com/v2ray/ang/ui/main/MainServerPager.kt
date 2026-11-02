@@ -347,6 +347,8 @@ private fun ServerListItem(
 ) {
     val testResult = if (row.testDelayMillis == 0L) {
         ""
+    } else if (row.testDelayMillis < 0L) {
+        "н/д"
     } else {
         stringResource(R.string.server_test_delay_value, row.testDelayMillis)
     }
