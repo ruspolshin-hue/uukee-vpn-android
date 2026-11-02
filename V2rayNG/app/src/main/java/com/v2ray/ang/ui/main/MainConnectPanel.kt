@@ -263,6 +263,24 @@ private fun BatteryPermissionDialog(enabled: Boolean) {
     )
 }
 
+/** Плашка статуса, как «Активна» / «Истекла» в Mini App. */
+@Composable
+private fun StatusPill(isRunning: Boolean) {
+    val color = if (isRunning) Color(0xFF22C55E) else Color(0xFFEF4444)
+    val shape = RoundedCornerShape(999.dp)
+    Text(
+        text = if (isRunning) "Подключено" else "Не подключено",
+        modifier = Modifier
+            .clip(shape)
+            .background(color.copy(alpha = 0.14f))
+            .border(1.dp, color.copy(alpha = 0.4f), shape)
+            .padding(horizontal = 14.dp, vertical = 4.dp),
+        color = color,
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.SemiBold
+    )
+}
+
 /** Заголовок списка: обновление подписки и четыре варианта проверки серверов. */
 @Composable
 fun MainServerTools(
