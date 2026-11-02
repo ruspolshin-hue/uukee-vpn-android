@@ -1,5 +1,8 @@
 package com.v2ray.ang.util
 
+import android.os.Build
+import android.provider.Settings
+import com.v2ray.ang.AngApplication
 import com.v2ray.ang.AppConfig
 import com.v2ray.ang.AppConfig.LOOPBACK
 import com.v2ray.ang.BuildConfig
@@ -18,6 +21,7 @@ import java.net.MalformedURLException
 import java.net.Proxy
 import java.net.URI
 import java.net.URL
+import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
 
 object HttpUtil {
@@ -144,6 +148,26 @@ object HttpUtil {
      * @return The content of the URL as a string.
      * @throws IOException If an I/O error occurs.
      */
+    /**
+     * Панель uukee считает устройства по x-hwid и без него отдаёт заглушку «App not supported».
+     * Идентификатор уходит только на домены сервиса, другим подпискам он не передаётся.
+     */
+    private fun applyUukeeDeviceHeaders(url: String, requestBuilder: Request.Builder) {
+        val host = runCatching { URI(url).host }.getOrNull()?.lowercase() ?: return
+        if (host != "uukee.xyz" && !host.endsWith(".uukee.xyz")) return
+        val androidId = runCatching {
+            Settings.Secure.getString(AngApplication.application.contentResolver, Settings.Secure.ANDROID_ID)
+        }.getOrNull().orEmpty()
+        if (androidId.isEmpty()) return
+        val hwid = MessageDigest.getInstance("SHA-256").digest(("uukee:" + androidId).toByteArray())
+            .joinToString("") { "%02x".format(it) }.take(32)
+        requestBuilder
+            .header("x-hwid", hwid)
+            .header("x-device-os", "Android")
+            .header("x-ver-os", Build.VERSION.RELEASE.orEmpty())
+            .header("x-device-model", Build.MODEL.orEmpty().take(64))
+    }
+
     @Throws(IOException::class)
     fun getUrlContentWithUserAgent(
         request: UrlContentRequest,
@@ -168,6 +192,7 @@ object HttpUtil {
                 .header("Connection", "close")
 
             applyEmbeddedBasicAuthHeader(currentUrl, requestBuilder)
+            applyUukeeDeviceHeaders(currentUrl, requestBuilder)
 
 
             val headersMap = JsonUtil.parseHeadersToMap(request.requestHeaders)
