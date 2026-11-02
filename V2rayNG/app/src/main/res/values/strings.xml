@@ -567,4 +567,8 @@
     <string name="sub_info_unlimited">Unlimited</string>
 
     <string name="uukee_admin_title" translatable="false">Для администраторов</string>
+    <string name="uukee_stats_title" translatable="false">Статистика</string>
+    <string name="uukee_reset_title" translatable="false">Сброс настроек</string>
+    <string name="uukee_faq_title" translatable="false">FAQ</string>
+    <string name="uukee_schemes_title" translatable="false">Схемы URL-адресов</string>
 </resources>

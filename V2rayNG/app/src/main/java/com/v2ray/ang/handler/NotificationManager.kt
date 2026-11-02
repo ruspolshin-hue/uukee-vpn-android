@@ -44,10 +44,11 @@ object NotificationManager {
      * @param currentConfig The current profile configuration.
      */
     fun startSpeedNotification() {
-        if (MmkvManager.decodeSettingsBool(AppConfig.PREF_SPEED_ENABLED) != true) return
+        if (!MmkvManager.decodeSettingsBool(AppConfig.PREF_SPEED_ENABLED, true)) return
         if (speedNotificationJob != null || CoreServiceManager.isRunning() == false) return
 
         var lastZeroSpeed = false
+        UukeeTrafficStats.startSession()
 
         speedNotificationJob = CoroutineScope(Dispatchers.IO).launch {
             while (isActive) {
@@ -263,6 +264,7 @@ object NotificationManager {
             }
         }
 
+        UukeeTrafficStats.add(proxyUplink, proxyDownlink, directUplink, directDownlink)
         val proxyTotal = proxyUplink + proxyDownlink
         val directTotal = directUplink + directDownlink
         val zeroSpeed = proxyTotal + directTotal == 0L

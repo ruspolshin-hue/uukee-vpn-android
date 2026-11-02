@@ -934,6 +934,11 @@ object MmkvManager {
      * @param key The settings key.
      * @return The settings value.
      */
+    /** Сброс настроек приложения. Подписки и серверы хранятся отдельно и не затрагиваются. */
+    fun clearSettings() {
+        settingsStorage.clearAll()
+    }
+
     fun decodeSettingsBool(key: String): Boolean {
         return settingsStorage.decodeBool(key, false)
     }

@@ -43,6 +43,10 @@ enum class MainDestination(@DrawableRes val iconRes: Int, @StringRes val labelRe
     Promotion(R.drawable.ic_promotion_24dp, R.string.title_pref_promotion),
     Logcat(R.drawable.ic_logcat_24dp, R.string.title_logcat),
     AdminStats(R.drawable.ic_privacy_24dp, R.string.uukee_admin_title),
+    Stats(R.drawable.ic_flash_on_24dp, R.string.uukee_stats_title),
+    Reset(R.drawable.ic_restore_24dp, R.string.uukee_reset_title),
+    Faq(R.drawable.ic_feedback_24dp, R.string.uukee_faq_title),
+    UrlSchemes(R.drawable.ic_source_code_24dp, R.string.uukee_schemes_title),
     CheckUpdate(R.drawable.ic_check_update_24dp, R.string.update_check_for_update),
     BackupRestore(R.drawable.ic_restore_24dp, R.string.title_configuration_backup_restore),
     About(R.drawable.ic_about_24dp, R.string.title_about)
@@ -51,11 +55,18 @@ enum class MainDestination(@DrawableRes val iconRes: Int, @StringRes val labelRe
 private val primaryDrawerItems = listOf(
     MainDestination.Subscriptions,
     MainDestination.PerAppProxy,
+    MainDestination.Routing,
+    MainDestination.UserAssets,
     MainDestination.Settings
 )
 
 private val drawerItems = primaryDrawerItems + listOf(
+    MainDestination.Stats,
     MainDestination.Logcat,
+    MainDestination.BackupRestore,
+    MainDestination.Reset,
+    MainDestination.Faq,
+    MainDestination.UrlSchemes,
     MainDestination.AdminStats,
     MainDestination.About
 )
