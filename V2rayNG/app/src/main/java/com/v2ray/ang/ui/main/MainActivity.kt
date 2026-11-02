@@ -155,6 +155,7 @@ class MainActivity : HelperBaseComponentActivity() {
             MainDestination.CheckUpdate -> Intent(this, CheckUpdateActivity::class.java)
             MainDestination.BackupRestore -> Intent(this, BackupActivity::class.java)
             MainDestination.About -> Intent(this, AboutActivity::class.java)
+            MainDestination.AdminStats -> Intent(this, com.v2ray.ang.ui.admin.AdminStatsActivity::class.java)
             MainDestination.Promotion -> {
                 Utils.openUri(
                     this,

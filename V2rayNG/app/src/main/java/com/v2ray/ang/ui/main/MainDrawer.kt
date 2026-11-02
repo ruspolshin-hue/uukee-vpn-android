@@ -42,6 +42,7 @@ enum class MainDestination(@DrawableRes val iconRes: Int, @StringRes val labelRe
     Settings(R.drawable.ic_settings_24dp, R.string.title_settings),
     Promotion(R.drawable.ic_promotion_24dp, R.string.title_pref_promotion),
     Logcat(R.drawable.ic_logcat_24dp, R.string.title_logcat),
+    AdminStats(R.drawable.ic_privacy_24dp, R.string.uukee_admin_title),
     CheckUpdate(R.drawable.ic_check_update_24dp, R.string.update_check_for_update),
     BackupRestore(R.drawable.ic_restore_24dp, R.string.title_configuration_backup_restore),
     About(R.drawable.ic_about_24dp, R.string.title_about)
@@ -55,6 +56,7 @@ private val primaryDrawerItems = listOf(
 
 private val drawerItems = primaryDrawerItems + listOf(
     MainDestination.Logcat,
+    MainDestination.AdminStats,
     MainDestination.About
 )
 
@@ -88,12 +90,7 @@ fun MainDrawerContent(drawerState: DrawerState, onNavigate: (MainDestination) ->
                     Image(
                         painter = painterResource(R.mipmap.ic_launcher_foreground),
                         contentDescription = null,
-                        modifier = Modifier.size(120.dp),
-                        colorFilter = if (isDarkTheme) {
-                            ColorFilter.tint(Color.White, BlendMode.SrcIn)
-                        } else {
-                            null
-                        }
+                        modifier = Modifier.size(120.dp)
                     )
                     Text(
                         text = stringResource(R.string.app_name),

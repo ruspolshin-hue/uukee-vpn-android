@@ -212,6 +212,9 @@
             android:name=".ui.AboutActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.admin.AdminStatsActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.TranslatorsActivity"
             android:exported="false" />
 
