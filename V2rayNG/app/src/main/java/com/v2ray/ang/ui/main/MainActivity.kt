@@ -26,6 +26,7 @@ import com.v2ray.ang.handler.SettingsChangeManager
 import com.v2ray.ang.handler.SettingsManager
 import com.v2ray.ang.handler.SubscriptionInfoParser
 import com.v2ray.ang.handler.UukeeAutoServer
+import com.v2ray.ang.handler.UukeeBypassApps
 import com.v2ray.ang.ui.AboutActivity
 import com.v2ray.ang.ui.tools.UukeeToolsActivity
 import com.v2ray.ang.ui.backup.BackupActivity
@@ -95,6 +96,7 @@ class MainActivity : HelperBaseComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        UukeeBypassApps.seedOnce()
         mainViewModel.onAction(MainAction.Initialize)
 
         checkAndRequestPermission(PermissionType.POST_NOTIFICATIONS) {}
