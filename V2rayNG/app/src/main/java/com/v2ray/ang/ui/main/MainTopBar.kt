@@ -48,7 +48,7 @@ fun MainTopBar(
     val maxMenuHeight = LocalConfiguration.current.screenHeightDp.dp - statusBarHeight - navBarHeight - 20.dp
 
     AppTopBar(
-        title = stringResource(R.string.title_server),
+        title = "UUkee VPN",
         onBackClick = {},
         isLoading = isLoading,
         isSearchActive = showSearch,
@@ -68,32 +68,6 @@ fun MainTopBar(
             }
         },
         actions = {
-            if (!showSearch) {
-                IconButton(onClick = { onSearchToggle(true) }) {
-                    Icon(painterResource(R.drawable.ic_search_24dp), contentDescription = stringResource(R.string.acc_search))
-                }
-            }
-            Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-                IconButton(onClick = { showImportMenu = true }) {
-                    Icon(painterResource(R.drawable.ic_add_24dp), contentDescription = stringResource(R.string.acc_add))
-                }
-                DropdownMenu(
-                    expanded = showImportMenu,
-                    onDismissRequest = { showImportMenu = false },
-                    scrollState = importMenuScrollState,
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    modifier = Modifier
-                        .heightIn(max = maxMenuHeight)
-                        .verticalScrollbar(importMenuScrollState)
-                ) {
-                    ImportMenuContent(
-                        onAction = { action ->
-                            showImportMenu = false
-                            onAction(action)
-                        }
-                    )
-                }
-            }
             Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
                 IconButton(onClick = { showMenu = true }) {
                     Icon(painterResource(R.drawable.ic_more_vert_24dp), contentDescription = stringResource(R.string.acc_more))

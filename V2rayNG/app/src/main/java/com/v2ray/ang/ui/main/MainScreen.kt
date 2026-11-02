@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.v2ray.ang.dto.entities.ProfileItem
+import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.ui.compose.LocalDarkTheme
 import com.v2ray.ang.ui.compose.QRCodeDialog
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -51,6 +52,10 @@ fun MainScreen(
     val shareQRCodeBitmap = uiState.shareQRCodeBitmap
 
     val isDarkTheme = LocalDarkTheme.current
+    val selectedServerName = remember(selectedGuid, groups) {
+        selectedGuid?.let { MmkvManager.decodeServerConfig(it)?.remarks }.orEmpty()
+    }
+    val hasSubscription = remember(groups) { mainViewModel.getSubscriptions().isNotEmpty() }
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var showSearch by remember { mutableStateOf(false) }
@@ -184,24 +189,23 @@ fun MainScreen(
                     }
                 )
             },
-            bottomBar = {
-                MainBottomBar(
-                    displayText = displayText,
-                    isRunning = isRunning,
-                    isDarkTheme = isDarkTheme,
-                    onAction = onAction
-                )
-            },
             floatingActionButton = {},
         ) { innerPadding ->
             val layoutDirection = LocalLayoutDirection.current
 
-            if (groups.isNotEmpty()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                MainConnectPanel(
+                    isRunning = isRunning,
+                    displayText = displayText,
+                    serverName = selectedServerName,
+                    hasSubscription = hasSubscription,
+                    onAction = onAction,
+                )
+                if (groups.isNotEmpty()) {
                     if (groups.size > 1) {
                         GroupTabBar(
                             groups = groups,
@@ -252,7 +256,7 @@ fun MainScreen(
                                 start = 0.dp,
                                 top = 0.dp,
                                 end = 0.dp,
-                                bottom = 80.dp
+                                bottom = 16.dp
                             )
                         )
                     }

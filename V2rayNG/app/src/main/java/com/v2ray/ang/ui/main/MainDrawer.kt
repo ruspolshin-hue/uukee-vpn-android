@@ -50,16 +50,11 @@ enum class MainDestination(@DrawableRes val iconRes: Int, @StringRes val labelRe
 private val primaryDrawerItems = listOf(
     MainDestination.Subscriptions,
     MainDestination.PerAppProxy,
-    MainDestination.Routing,
-    MainDestination.UserAssets,
     MainDestination.Settings
 )
 
 private val drawerItems = primaryDrawerItems + listOf(
-    MainDestination.Promotion,
     MainDestination.Logcat,
-    MainDestination.CheckUpdate,
-    MainDestination.BackupRestore,
     MainDestination.About
 )
 

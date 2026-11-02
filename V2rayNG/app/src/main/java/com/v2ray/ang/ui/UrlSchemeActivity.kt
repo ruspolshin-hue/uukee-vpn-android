@@ -10,6 +10,7 @@ import com.v2ray.ang.R
 import com.v2ray.ang.extension.toast
 import com.v2ray.ang.extension.toastError
 import com.v2ray.ang.handler.AngConfigManager
+import com.v2ray.ang.handler.MmkvManager
 import com.v2ray.ang.ui.base.BaseComponentActivity
 import com.v2ray.ang.ui.main.MainActivity
 import com.v2ray.ang.util.LogUtil
@@ -41,6 +42,10 @@ class UrlSchemeActivity : BaseComponentActivity() {
                         "install-sub" -> {
                             val uri: Uri? = intent.data
                             val shareUrl = uri?.getQueryParameter("url").orEmpty()
+                            if (uri?.scheme == "uukee") {
+                                installUukeeSubscription(shareUrl)
+                                return
+                            }
                             parseUri(shareUrl, uri?.fragment)
                         }
 
@@ -60,6 +65,36 @@ class UrlSchemeActivity : BaseComponentActivity() {
 
     @Composable
     override fun ScreenContent() {
+    }
+
+    /** Кнопка из бота: добавляет подписку сервиса, выбирает сервер и открывает главный экран. */
+    private fun installUukeeSubscription(url: String) {
+        val parsed = Uri.parse(url)
+        val host = parsed.host?.lowercase().orEmpty()
+        val trusted = parsed.scheme == "https" && (host == "uukee.xyz" || host.endsWith(".uukee.xyz"))
+        lifecycleScope.launch(Dispatchers.IO) {
+            var added = false
+            if (trusted) {
+                val existing = MmkvManager.decodeSubscriptions().firstOrNull { it.subscription.url == url }
+                added = if (existing != null) {
+                    AngConfigManager.updateConfigViaSub(existing)
+                    true
+                } else {
+                    AngConfigManager.importBatchConfig(url, "", false).second > 0
+                }
+                if (added && MmkvManager.getSelectServer().isNullOrEmpty()) {
+                    MmkvManager.decodeAllServerList().firstOrNull()?.let { MmkvManager.setSelectServer(it) }
+                }
+            }
+            withContext(Dispatchers.Main) {
+                toast(if (added) R.string.import_subscription_success else R.string.import_subscription_failure)
+                startActivity(
+                    Intent(this@UrlSchemeActivity, MainActivity::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                )
+                finish()
+            }
+        }
     }
 
     private fun parseUri(uriString: String?, fragment: String?) {
