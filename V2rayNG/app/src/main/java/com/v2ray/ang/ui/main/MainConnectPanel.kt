@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +24,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.v2ray.ang.R
 
-private val ColorConnected = Color(0xFF8A20FF)
+private val ColorConnected = Color(0xFFA855F7)
 private const val BOT_URL = "https://t.me/uukee_bot"
 
 /** Главный блок UUkee VPN: большая кнопка подключения, статус и выбранный сервер. */
@@ -44,10 +47,15 @@ fun MainConnectPanel(
     hasSubscription: Boolean,
     onAction: (MainAction) -> Unit,
 ) {
+    val cardShape = RoundedCornerShape(20.dp)
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .clip(cardShape)
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, cardShape)
+            .padding(horizontal = 20.dp, vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (!hasSubscription) {
@@ -67,14 +75,16 @@ fun MainConnectPanel(
             Spacer(Modifier.height(16.dp))
             Button(
                 onClick = { onAction(MainAction.OpenSubscriptionLink(BOT_URL)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Открыть бота")
             }
             Spacer(Modifier.height(8.dp))
             OutlinedButton(
                 onClick = { onAction(MainAction.ImportClipboard) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Вставить ссылку подписки")
             }
@@ -84,7 +94,8 @@ fun MainConnectPanel(
                     .size(132.dp)
                     .clip(CircleShape)
                     .background(
-                        if (isRunning) ColorConnected else MaterialTheme.colorScheme.surfaceContainerHigh
+                        if (isRunning) Brush.linearGradient(listOf(Color(0xFFA855F7), Color(0xFF7E22CE)))
+                        else SolidColor(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
                     )
                     .border(
                         width = 3.dp,

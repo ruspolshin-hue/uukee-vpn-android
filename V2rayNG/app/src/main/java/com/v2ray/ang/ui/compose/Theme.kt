@@ -5,7 +5,10 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -19,91 +22,98 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontVariation
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.v2ray.ang.AppConfig
+import com.v2ray.ang.R
 import com.v2ray.ang.handler.MmkvManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 private val LightColor = lightColorScheme(
-    primary = Color(0xFF6D28D9),
+    primary = Color(0xFFA855F7),
     onPrimary = Color(0xFFFFFFFF),
-    primaryContainer = Color(0xFFEDE3FF),
-    onPrimaryContainer = Color(0xFF230B52),
-    secondary = Color(0xFF8A20FF),
+    primaryContainer = Color(0xFFF3E8FF),
+    onPrimaryContainer = Color(0xFF581C87),
+    secondary = Color(0xFF7E22CE),
     onSecondary = Color(0xFFFFFFFF),
-    secondaryContainer = Color(0xFFF0E3FF),
-    onSecondaryContainer = Color(0xFF2A0F5E),
+    secondaryContainer = Color(0xFFE9D5FF),
+    onSecondaryContainer = Color(0xFF581C87),
     tertiary = Color(0xFF009966), // Green
     onTertiary = Color(0xFFFFFFFF), // White
     tertiaryContainer = Color(0xFFA0F2D0), // Light Green
     onTertiaryContainer = Color(0xFF00201A), // Dark Teal
-    error = Color(0xFFBA1A1A), // Red
+    error = Color(0xFFEF4444),
     errorContainer = Color(0xFFFFDAD6), // Light Red
     onError = Color(0xFFFFFFFF), // White
     onErrorContainer = Color(0xFF410002), // Dark Red
-    background = Color(0xFFFFFFFF), // White
-    onBackground = Color(0xFF1C1B1F), // Near Black
-    surface = Color(0xFFFFFFFF), // White
-    onSurface = Color(0xFF1C1B1F), // Near Black
-    surfaceVariant = Color(0xFFE7E0EC), // Light Purple Gray
-    onSurfaceVariant = Color(0xFF49454F), // Dark Gray
-    outline = Color(0xFF79747E), // Medium Gray
-    outlineVariant = Color(0xFFCAC4D0), // Light Gray
+    background = Color(0xFFF3E8FF),
+    onBackground = Color(0xFF581C87),
+    surface = Color(0xFFF3E8FF),
+    onSurface = Color(0xFF581C87),
+    surfaceVariant = Color(0xFFFAF5FF),
+    onSurfaceVariant = Color(0xFF7E22CE),
+    outline = Color(0xFFC084FC),
+    outlineVariant = Color(0xFFE9D5FF),
     inverseSurface = Color(0xFF313033), // Dark Gray
     inverseOnSurface = Color(0xFFF4EFF4), // Very Light Gray
-    inversePrimary = Color(0xFFC4A7FF),
+    inversePrimary = Color(0xFFC4B5FD),
     scrim = Color(0xFF000000), // Black
-    surfaceTint = Color(0xFF6D28D9),
-    surfaceContainerLowest = Color(0xFFFFFFFF), // White
-    surfaceContainerLow = Color(0xFFF7F7F7), // Very Light Gray
-    surfaceContainer = Color(0xFFF1F1F1), // Light Gray
-    surfaceContainerHigh = Color(0xFFEBEBEB), // Light Gray
-    surfaceContainerHighest = Color(0xFFE5E5E5), // Light Gray
+    surfaceTint = Color(0xFFA855F7),
+    surfaceContainerLowest = Color(0xFFFFFFFF),
+    surfaceContainerLow = Color(0xFFFAF5FF),
+    surfaceContainer = Color(0xFFFAF5FF),
+    surfaceContainerHigh = Color(0xFFFAF5FF),
+    surfaceContainerHighest = Color(0xFFF3E8FF),
 )
 
 private val DarkColor = darkColorScheme(
-    primary = Color(0xFFC4A7FF),
-    onPrimary = Color(0xFF2A0F5E),
-    primaryContainer = Color(0xFF4A1FB8),
-    onPrimaryContainer = Color(0xFFEDE3FF),
-    secondary = Color(0xFFB98CFF),
-    onSecondary = Color(0xFF2A0F5E),
-    secondaryContainer = Color(0xFF3D1A80),
-    onSecondaryContainer = Color(0xFFF0E3FF),
+    primary = Color(0xFFA855F7),
+    onPrimary = Color(0xFFFFFFFF),
+    primaryContainer = Color(0xFF3B1A66),
+    onPrimaryContainer = Color(0xFFF3E8FF),
+    secondary = Color(0xFFC4B5FD),
+    onSecondary = Color(0xFF1E1B2E),
+    secondaryContainer = Color(0xFF2C2147),
+    onSecondaryContainer = Color(0xFFFAF5FF),
     tertiary = Color(0xFF83D6B5), // Mint Green
     onTertiary = Color(0xFF00382E), // Dark Teal
     tertiaryContainer = Color(0xFF005143), // Teal
     onTertiaryContainer = Color(0xFFA0F2D0), // Light Green
-    error = Color(0xFFFFB4AB), // Light Red
+    error = Color(0xFFEF4444),
     errorContainer = Color(0xFF93000A), // Dark Red
     onError = Color(0xFF690005), // Deep Red
     onErrorContainer = Color(0xFFFFDAD6), // Light Red
-    background = Color(0xFF0B0618),
-    onBackground = Color(0xFFE6E1E5), // Light Gray
-    surface = Color(0xFF0B0618),
-    onSurface = Color(0xFFE6E1E5), // Light Gray
-    surfaceVariant = Color(0xFF2A2140),
-    onSurfaceVariant = Color(0xFFCAC4D0), // Light Gray
-    outline = Color(0xFF938F99), // Grayish Purple
-    outlineVariant = Color(0xFF49454F), // Dark Gray
+    background = Color(0xFF0F0A1A),
+    onBackground = Color(0xFFFAF5FF),
+    surface = Color(0xFF0F0A1A),
+    onSurface = Color(0xFFFAF5FF),
+    surfaceVariant = Color(0xFF1E1B2E),
+    onSurfaceVariant = Color(0xFFC4B5FD),
+    outline = Color(0xFF5B4B85),
+    outlineVariant = Color(0xFF2E2A45),
     inverseSurface = Color(0xFFE6E1E5), // Light Gray
     inverseOnSurface = Color(0xFF1C1B1F), // Near Black
-    inversePrimary = Color(0xFF6D28D9),
+    inversePrimary = Color(0xFF7E22CE),
     scrim = Color(0xFF000000), // Black
-    surfaceTint = Color(0xFFC4A7FF),
-    surfaceContainerLowest = Color(0xFF070411),
-    surfaceContainerLow = Color(0xFF120B24),
-    surfaceContainer = Color(0xFF18102E),
-    surfaceContainerHigh = Color(0xFF201638),
-    surfaceContainerHighest = Color(0xFF291D45),
+    surfaceTint = Color(0xFFA855F7),
+    surfaceContainerLowest = Color(0xFF0F0A1A),
+    surfaceContainerLow = Color(0xFF151022),
+    surfaceContainer = Color(0xFF1E1B2E),
+    surfaceContainerHigh = Color(0xFF1E1B2E),
+    surfaceContainerHighest = Color(0xFF272342),
 )
 
 // Semantic Colors
-val colorPing = Color(0xFF009966) // Green
-val colorPingRed = Color(0xFFFF0099) // Pink Red
+val colorPing = Color(0xFF22C55E)
+val colorPingRed = Color(0xFFEF4444)
 val colorConfigType = Color(0xFFf97910) // Orange
 val colorFabActive = Color(0xFFf97910) // Orange
 val colorFabInactiveLight = Color(0xFF9C9C9C) // Gray
@@ -161,6 +171,49 @@ fun resolveDarkTheme(): Boolean {
 
 val LocalDarkTheme = compositionLocalOf { false }
 
+@OptIn(ExperimentalTextApi::class)
+private fun manrope(weight: Int) = Font(
+    resId = R.font.manrope,
+    weight = FontWeight(weight),
+    variationSettings = FontVariation.Settings(FontVariation.weight(weight))
+)
+
+private val Manrope = FontFamily(
+    manrope(400),
+    manrope(500),
+    manrope(600),
+    manrope(700),
+    manrope(800),
+)
+
+private val UukeeTypography = Typography().run {
+    copy(
+        displayLarge = displayLarge.copy(fontFamily = Manrope),
+        displayMedium = displayMedium.copy(fontFamily = Manrope),
+        displaySmall = displaySmall.copy(fontFamily = Manrope),
+        headlineLarge = headlineLarge.copy(fontFamily = Manrope),
+        headlineMedium = headlineMedium.copy(fontFamily = Manrope),
+        headlineSmall = headlineSmall.copy(fontFamily = Manrope),
+        titleLarge = titleLarge.copy(fontFamily = Manrope),
+        titleMedium = titleMedium.copy(fontFamily = Manrope),
+        titleSmall = titleSmall.copy(fontFamily = Manrope),
+        bodyLarge = bodyLarge.copy(fontFamily = Manrope),
+        bodyMedium = bodyMedium.copy(fontFamily = Manrope),
+        bodySmall = bodySmall.copy(fontFamily = Manrope),
+        labelLarge = labelLarge.copy(fontFamily = Manrope),
+        labelMedium = labelMedium.copy(fontFamily = Manrope),
+        labelSmall = labelSmall.copy(fontFamily = Manrope),
+    )
+}
+
+private val UukeeShapes = Shapes(
+    extraSmall = RoundedCornerShape(8.dp),
+    small = RoundedCornerShape(12.dp),
+    medium = RoundedCornerShape(16.dp),
+    large = RoundedCornerShape(20.dp),
+    extraLarge = RoundedCornerShape(28.dp),
+)
+
 @Composable
 fun AppTheme(
     darkTheme: Boolean = resolveDarkTheme(),
@@ -195,7 +248,9 @@ fun AppTheme(
         LocalAppSnackbar provides snackbarController
     ) {
         MaterialTheme(
-            colorScheme = colorScheme
+            colorScheme = colorScheme,
+            typography = UukeeTypography,
+            shapes = UukeeShapes
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 AppSnackbarBridge(controller = snackbarController)

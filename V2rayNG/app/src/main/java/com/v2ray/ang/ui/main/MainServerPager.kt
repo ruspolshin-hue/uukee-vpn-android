@@ -31,6 +31,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -353,46 +355,39 @@ private fun ServerListItem(
     } else {
         null
     }
+    val cardShape = RoundedCornerShape(16.dp)
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(IntrinsicSize.Min)
+            .padding(horizontal = 12.dp, vertical = 4.dp)
             .semantics {
                 if (selectedStateDescription != null) {
                     stateDescription = selectedStateDescription
                 }
             }
+            .clip(cardShape)
+            .background(
+                if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
+                else MaterialTheme.colorScheme.surfaceContainer
+            )
+            .border(
+                width = if (isSelected) 1.5.dp else 1.dp,
+                color = if (isSelected) MaterialTheme.colorScheme.primary
+                else MaterialTheme.colorScheme.outlineVariant,
+                shape = cardShape
+            )
             .clickable { actions.select(row.guid) }
     ) {
-        Box(
-            Modifier
-                .width(10.dp)
-                .fillMaxHeight()
-        ) {
-            if (isSelected) {
-                Row {
-                    Spacer(Modifier.width(6.dp))
-                    Box(
-                        Modifier
-                            .width(4.dp)
-                            .fillMaxHeight()
-                            .padding(vertical = 10.dp)
-                            .background(MaterialTheme.colorScheme.primary)
-                    )
-                }
-            }
-        }
-
         Row(
             Modifier
                 .weight(1f)
-                .padding(start = 8.dp, end = 16.dp, top = 14.dp, bottom = 14.dp),
+                .padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 row.remarks,
                 Modifier.weight(1f),
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
