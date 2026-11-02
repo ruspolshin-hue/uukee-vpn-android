@@ -1,5 +1,23 @@
 package com.v2ray.ang.ui.main
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -47,36 +65,43 @@ fun MainTopBar(
     val navBarHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val maxMenuHeight = LocalConfiguration.current.screenHeightDp.dp - statusBarHeight - navBarHeight - 20.dp
 
-    AppTopBar(
-        title = "UUkee VPN",
-        onBackClick = {},
-        isLoading = isLoading,
-        isSearchActive = showSearch,
-        searchQuery = searchQuery,
-        onSearchQueryChange = onSearchQueryChange,
-        onSearchClose = onSearchClose,
-        searchPlaceholder = stringResource(R.string.menu_item_search),
-        navigationIcon = {
-            if (showSearch) {
-                IconButton(onClick = onSearchClose) {
-                    Icon(painterResource(R.drawable.ic_arrow_back_24dp), contentDescription = stringResource(R.string.acc_back))
-                }
-            } else {
-                IconButton(onClick = onMenuClick) {
-                    Icon(painterResource(R.drawable.ic_menu_24dp), contentDescription = stringResource(R.string.acc_open_menu))
-                }
-            }
-        },
-        actions = {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+    ) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val logoShape = RoundedCornerShape(12.dp)
+            Image(
+                painter = painterResource(R.mipmap.ic_launcher_foreground),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(logoShape)
+                    .background(Color(0xFF0F0A1A))
+                    .border(1.dp, MaterialTheme.colorScheme.outlineVariant, logoShape)
+            )
+            Spacer(Modifier.width(12.dp))
+            Text(
+                text = "UUkee VPN",
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
             Box(modifier = Modifier.wrapContentSize(Alignment.TopEnd)) {
-                IconButton(onClick = { showMenu = true }) {
-                    Icon(painterResource(R.drawable.ic_more_vert_24dp), contentDescription = stringResource(R.string.acc_more))
+                HeaderIconButton(R.drawable.ic_more_vert_24dp, stringResource(R.string.acc_more)) {
+                    showMenu = true
                 }
                 DropdownMenu(
                     expanded = showMenu,
                     onDismissRequest = { showMenu = false },
                     scrollState = moreMenuScrollState,
-                    containerColor = MaterialTheme.colorScheme.surface,
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     modifier = Modifier
                         .heightIn(max = maxMenuHeight)
                         .verticalScrollbar(moreMenuScrollState)
@@ -87,6 +112,25 @@ fun MainTopBar(
                     }
                 }
             }
+            Spacer(Modifier.width(8.dp))
+            HeaderIconButton(R.drawable.ic_menu_24dp, stringResource(R.string.title_settings), onMenuClick)
         }
-    )
+        if (isLoading) {
+            LinearProgressIndicator(Modifier.fillMaxWidth())
+        }
+    }
+}
+
+@Composable
+private fun HeaderIconButton(iconRes: Int, description: String, onClick: () -> Unit) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier
+            .size(44.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.72f))
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape)
+    ) {
+        Icon(painterResource(iconRes), contentDescription = description, modifier = Modifier.size(22.dp))
+    }
 }

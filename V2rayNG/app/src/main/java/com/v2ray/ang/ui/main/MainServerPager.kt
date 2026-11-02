@@ -368,7 +368,7 @@ private fun ServerListItem(
             .clip(cardShape)
             .background(
                 if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.16f)
-                else MaterialTheme.colorScheme.surfaceContainer
+                else MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.72f)
             )
             .border(
                 width = if (isSelected) 1.5.dp else 1.dp,

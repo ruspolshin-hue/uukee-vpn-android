@@ -1,5 +1,6 @@
 package com.v2ray.ang.ui.main
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,8 +11,10 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScaffoldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,7 +28,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.v2ray.ang.dto.entities.ProfileItem
@@ -154,7 +159,10 @@ fun MainScreen(
             )
         }
     ) {
+        Box(Modifier.fillMaxSize()) {
+        ConstellationBackground()
         Scaffold(
+            containerColor = Color.Transparent,
             contentWindowInsets = ScaffoldDefaults.contentWindowInsets,
             topBar = {
                 MainTopBar(
@@ -189,6 +197,7 @@ fun MainScreen(
                     }
                 )
             },
+            bottomBar = { UukeeBottomNav(onAction) },
             floatingActionButton = {},
         ) { innerPadding ->
             val layoutDirection = LocalLayoutDirection.current
@@ -206,6 +215,12 @@ fun MainScreen(
                     onAction = onAction,
                 )
                 if (groups.isNotEmpty()) {
+                    Text(
+                        text = "Серверы",
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp, bottom = 4.dp),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
                     if (groups.size > 1) {
                         GroupTabBar(
                             groups = groups,
@@ -262,6 +277,7 @@ fun MainScreen(
                     }
                 }
             }
+        }
         }
     }
 }

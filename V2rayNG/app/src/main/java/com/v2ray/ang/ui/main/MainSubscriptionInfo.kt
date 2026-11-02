@@ -38,7 +38,7 @@ import com.v2ray.ang.util.Utils
 private const val MILLIS_PER_SECOND = 1000L
 private const val EXPIRY_DATE_PATTERN = "yyyy-MM-dd"
 private const val NO_EXPIRY_SYMBOL = "\u221E"
-private const val CARD_ALPHA = 0.97f
+private const val CARD_ALPHA = 0.9f
 
 /** Locale-neutral values the subscription information box renders. */
 internal data class SubscriptionInfoUiModel(
